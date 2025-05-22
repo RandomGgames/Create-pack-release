@@ -7,6 +7,10 @@ on:
         description: "Tag name (e.g. v1.0.0)"
         required: true
         type: string
+      version_range:
+        description: "Version range (e.g. 1.21-1.21.5)"
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -24,10 +28,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.event.inputs.tag }}
+          version_range: ${{ github.event.inputs.version_range }}
         run: |
           repo_name="${GITHUB_REPOSITORY#*/}"
           gh release create "$tag" \
               --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --title="${GITHUB_REPOSITORY#*/} ${tag#v} for $version_range" \
               --generate-notes \
               "$repo_name.zip"
