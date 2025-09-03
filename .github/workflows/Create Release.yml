@@ -21,7 +21,8 @@ jobs:
       - name: Zip files for release
         run: |
           repo_name="${GITHUB_REPOSITORY#*/}"
-          zip -r "$repo_name.zip" data pack.mcmeta
+          zip -r "$zip_name" data pack.mcmeta
+          [ -f pack.png ] && zip -u "$zip_name" pack.png
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
