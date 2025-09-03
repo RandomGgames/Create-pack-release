@@ -30,7 +30,7 @@ jobs:
           zip -r "$zip_name" data pack.mcmeta
 
           # Add pack.png if it exists
-          [ -f pack.png ] && zip -u "$zip_name" pack.png
+          [ -f pack.png ] && zip -u "$zip_name" pack.png || true
 
       - name: Create release
         env:
