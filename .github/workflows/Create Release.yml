@@ -18,13 +18,11 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
       - name: Zip files for release
         run: |
           repo_name="${GITHUB_REPOSITORY#*/}"
           zip -r "$repo_name.zip" data pack.mcmeta
           [ -f pack.png ] && zip -u "$repo_name.zip" pack.png
-
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
