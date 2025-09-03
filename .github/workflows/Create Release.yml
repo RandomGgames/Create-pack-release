@@ -30,7 +30,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.event.inputs.tag }}
-          version_range: ${{ github.event.inputs.version_range }}
         run: |
           repo_name="${GITHUB_REPOSITORY#*/}"
           gh release create "$tag" \
