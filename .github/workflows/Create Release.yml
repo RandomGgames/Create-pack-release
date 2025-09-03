@@ -3,8 +3,8 @@ name: Create release
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: "Pack version (e.g. 1.0.0)"
+      tag:
+        description: "Tag name (e.g. v1.0.0)"
         required: true
         type: string
 
@@ -13,34 +13,25 @@ permissions:
 
 jobs:
   release:
-    name: Release datapack
+    name: Release pushed tag
     runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
       - name: Zip files for release
         run: |
           repo_name="${GITHUB_REPOSITORY#*/}"
-          version="${{ github.event.inputs.version }}"
-          zip_name="${repo_name}-${version}.zip"
-
-          # Always include required files
           zip -r "$zip_name" data pack.mcmeta
-
-          # Add pack.png if it exists
           [ -f pack.png ] && zip -u "$zip_name" pack.png
-
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          version: ${{ github.event.inputs.version }}
+          tag: ${{ github.event.inputs.tag }}
+          version_range: ${{ github.event.inputs.version_range }}
         run: |
           repo_name="${GITHUB_REPOSITORY#*/}"
-          tag="v${version}"
-
           gh release create "$tag" \
               --repo="$GITHUB_REPOSITORY" \
-              --title="${repo_name} $version" \
+              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
               --generate-notes \
-              "${repo_name}-${version}.zip"
+              "$repo_name.zip"
