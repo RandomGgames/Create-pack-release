@@ -1,7 +1,7 @@
 name: Create pack release
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       tag:
         description: "Tag name (e.g. v1.0.0)"
@@ -13,13 +13,14 @@ permissions:
 
 jobs:
   release:
-    name: Release datapack
+    name: Release pack
     runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
       - name: Zip files for release
+        env:
+          tag: ${{ github.event.inputs.tag }}
         run: |
           repo_name="${GITHUB_REPOSITORY#*/}"
           tag="${{ inputs.tag }}"
@@ -34,9 +35,9 @@ jobs:
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.event.inputs.tag }}
         run: |
           repo_name="${GITHUB_REPOSITORY#*/}"
-          tag="${{ inputs.tag }}"
           gh release create "$tag" \
               --repo="$GITHUB_REPOSITORY" \
               --title="${repo_name} ${tag#v}" \
