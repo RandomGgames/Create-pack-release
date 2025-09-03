@@ -1,7 +1,7 @@
-name: Create release
+name: Create pack release
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       tag:
         description: "Tag name (e.g. v1.0.0)"
@@ -13,24 +13,30 @@ permissions:
 
 jobs:
   release:
-    name: Release pushed tag
+    name: Release datapack
     runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
       - name: Zip files for release
-        env:
-          tag: ${{ github.event.inputs.tag }}
         run: |
           repo_name="${GITHUB_REPOSITORY#*/}"
+          tag="${{ inputs.tag }}"
           zip_name="${repo_name}-${tag#v}.zip"
+
+          # Create zip with required files
           zip -r "$zip_name" data pack.mcmeta
+
+          # Add pack.png if it exists
+          [ -f pack.png ] && zip -u "$zip_name" pack.png
+
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.event.inputs.tag }}
         run: |
           repo_name="${GITHUB_REPOSITORY#*/}"
+          tag="${{ inputs.tag }}"
           gh release create "$tag" \
               --repo="$GITHUB_REPOSITORY" \
               --title="${repo_name} ${tag#v}" \
