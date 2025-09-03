@@ -26,8 +26,15 @@ jobs:
           tag="${{ inputs.tag }}"
           zip_name="${repo_name}-${tag#v}.zip"
 
-          # Create zip with required files
-          zip -r "$zip_name" data pack.mcmeta
+          # Check required file
+          [ -f pack.mcmeta ] || { echo "Error: pack.mcmeta not found"; exit 1; }
+
+          # Start zip with required file
+          zip -r "$zip_name" pack.mcmeta || true
+
+          # Add optional folders if they exist
+          [ -d data ] && zip -r "$zip_name" data || true
+          [ -d assets ] && zip -r "$zip_name" assets || true
 
           # Add pack.png if it exists
           [ -f pack.png ] && zip -u "$zip_name" pack.png || true
