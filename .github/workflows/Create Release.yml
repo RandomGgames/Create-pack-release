@@ -19,9 +19,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Zip files for release
+        env:
+          tag: ${{ github.event.inputs.tag }}
         run: |
           repo_name="${GITHUB_REPOSITORY#*/}"
-          zip -r "$repo_name-${tag#v}.zip" data pack.mcmeta
+          zip_name="${repo_name}-${tag#v}.zip"
+          zip -r "$zip_name" data pack.mcmeta
+          [ -f pack.png ] && zip -u "$zip_name" pack.png
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
