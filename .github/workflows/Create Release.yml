@@ -23,7 +23,6 @@ jobs:
           repo_name="${GITHUB_REPOSITORY#*/}"
           zip_name="${repo_name}-${tag}.zip"
           zip -r "$zip_name" data pack.mcmeta
-          [ -f pack.png ] && zip -u "$zip_name" pack.png
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
