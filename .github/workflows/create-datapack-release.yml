@@ -1,4 +1,4 @@
-name: Create Datapack Release
+name: Create Data Pack Release
 
 on:
   workflow_dispatch:
